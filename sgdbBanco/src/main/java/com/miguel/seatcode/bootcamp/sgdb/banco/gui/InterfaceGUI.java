@@ -1,16 +1,20 @@
 package com.miguel.seatcode.bootcamp.sgdb.banco.gui;
 
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.InsertDatabase;
+import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Usuario;
 
 import java.util.Scanner;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
+
 
 public class InterfaceGUI {
     private static Connection condb;
 
-    static void getUser() {
-
+    public InterfaceGUI(Connection con) throws SQLException {
+        this.condb = con;
+        menu();
     }
 
     static boolean selectorOpciones(int option){
@@ -21,14 +25,22 @@ public class InterfaceGUI {
                 return true;
 
             case 1:
-                // Crear Usuario
-                System.out.println("\n");
+                // Crear Usuario obtener datos del usuario a traves de la consola
+                Usuario nuevoUsuario = new Usuario();
+                String sql=nuevoUsuario.crearUsuario();
+                if (sql !=null) {
+                    //Tengo todos los datos ok los meto en la db
                     try {
-                        InsertDatabase insert = new InsertDatabase(condb,"use mazebank");
+                        InsertDatabase insert = new InsertDatabase(condb,sql);
                     }
                     catch (SQLException exception) {
+                        System.out.println("Error al insertar nuevo usuario en la bd" + exception);
                         exception.printStackTrace();
                     }
+                }
+                else {
+                    System.out.println("Algun datos es incorrecto");
+                }
 
                 break;
 
@@ -79,8 +91,5 @@ public class InterfaceGUI {
 
         } while (flagexit != true);
     }
-    public InterfaceGUI(Connection con) throws SQLException {
-        this.condb = con;
-        menu();
-    }
+
 }

@@ -16,7 +16,7 @@ public class InsertDatabase {
             stmt.executeUpdate(SQL);
         }
         catch (SQLException exception) {
-            System.out.println("Error al rollback and save point" + exception);
+            System.out.println("Error en InsertDatabase" + exception);
         }
 
     }

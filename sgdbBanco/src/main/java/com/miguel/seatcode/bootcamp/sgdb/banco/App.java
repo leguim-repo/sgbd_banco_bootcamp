@@ -1,9 +1,8 @@
 package com.miguel.seatcode.bootcamp.sgdb.banco;
 
-import com.miguel.seatcode.bootcamp.sgdb.banco.clases.SelectDatabase;
+import com.miguel.seatcode.bootcamp.sgdb.banco.clases.ConnectDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.gui.InterfaceGUI;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -14,9 +13,8 @@ public class App
 {
     public static void main( String[] args )  throws SQLException
     {
-        SelectDatabase seldb = new SelectDatabase("mazebank");
-        Connection con = seldb.getConnection();
-        InterfaceGUI gui = new InterfaceGUI(con);
+        ConnectDatabase seldb = new ConnectDatabase("mazebank");
+        InterfaceGUI gui = new InterfaceGUI(seldb.getConnection());
 
     }
 }

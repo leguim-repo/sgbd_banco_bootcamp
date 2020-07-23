@@ -5,9 +5,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SelectDatabase {
+public class ConnectDatabase {
     Connection connection;
-    public SelectDatabase(String target) {
+    public ConnectDatabase(String target) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         }
