@@ -18,6 +18,7 @@ public class InterfaceGUI {
     }
 
     static boolean selectorOpciones(int option){
+    Usuario usuario;
         switch (option) {
 
             case 0:
@@ -26,8 +27,8 @@ public class InterfaceGUI {
 
             case 1:
                 // Crear Usuario obtener datos del usuario a traves de la consola
-                Usuario nuevoUsuario = new Usuario();
-                String sql=nuevoUsuario.crearUsuario();
+                usuario = new Usuario();
+                String sql=usuario.crearUsuario();
                 if (sql !=null) {
                     //Tengo todos los datos ok los meto en la db
                     try {
@@ -46,6 +47,8 @@ public class InterfaceGUI {
 
             case 2:
                 // Consultar Usuario
+                usuario = new Usuario();
+                usuario.consultarUsuario(condb);
                 break;
 
             case 3:
