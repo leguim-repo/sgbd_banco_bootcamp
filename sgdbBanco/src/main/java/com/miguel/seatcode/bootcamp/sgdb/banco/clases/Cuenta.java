@@ -6,17 +6,17 @@ import java.sql.SQLException;
 
 
 public class Cuenta implements CuentaActions {
-    private int id;
+    private Long id;
     private float balance;
     private String fecha;
-    private int fk_id_usuario;
+    private Long fk_id_usuario;
 
 
     public Cuenta() {
     }
 
     @Override
-    public String crearCuenta(float balance, int fk_id_usuario) {
+    public String crearCuenta(float balance, Long fk_id_usuario) {
         this.setBalance(balance);
         this.setFk_id_usuario(fk_id_usuario);
 
@@ -43,14 +43,16 @@ public class Cuenta implements CuentaActions {
 
     @Override
     public String reintegro(Connection conn) {
+        //
+
         return null;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,11 +72,11 @@ public class Cuenta implements CuentaActions {
         this.fecha = fecha;
     }
 
-    public int getFk_id_usuario() {
+    public Long getFk_id_usuario() {
         return fk_id_usuario;
     }
 
-    public void setFk_id_usuario(int fk_id_usuario) {
+    public void setFk_id_usuario(Long fk_id_usuario) {
         this.fk_id_usuario = fk_id_usuario;
     }
 

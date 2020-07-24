@@ -1,6 +1,6 @@
 package com.miguel.seatcode.bootcamp.sgdb.banco;
 
-import com.miguel.seatcode.bootcamp.sgdb.banco.clases.ConnectDatabase;
+import com.miguel.seatcode.bootcamp.sgdb.banco.database.ConnectDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.gui.InterfaceGUI;
 
 import java.sql.SQLException;

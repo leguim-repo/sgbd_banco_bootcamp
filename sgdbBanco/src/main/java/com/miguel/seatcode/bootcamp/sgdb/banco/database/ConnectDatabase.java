@@ -1,4 +1,4 @@
-package com.miguel.seatcode.bootcamp.sgdb.banco.clases;
+package com.miguel.seatcode.bootcamp.sgdb.banco.database;
 
 
 import java.sql.Connection;

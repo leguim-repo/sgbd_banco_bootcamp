@@ -2,7 +2,7 @@ package com.miguel.seatcode.bootcamp.sgdb.banco.gui;
 
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Cuenta;
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Historico;
-import com.miguel.seatcode.bootcamp.sgdb.banco.clases.InsertDatabase;
+import com.miguel.seatcode.bootcamp.sgdb.banco.database.InsertDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Usuario;
 
 import java.util.Scanner;
@@ -60,13 +60,14 @@ public class InterfaceGUI {
                     System.out.println("Algun de la cuenta es incorrecto");
                 }
 
-                //todo recargar los datos de la cuenta con el fin de obtener el id y crear el registro para el historico
+                //seteo el id
                 cuenta.setId(insertDB.getLastIdInserterd());
 
                 //creo el registro en el historico para indicar que se ha creado la cuenta
                 historico = new Historico();
-                historico.crearHistorico("Creacion de la Cuenta",cuenta.getBalance(),cuenta.getId());
-
+                String sqlHistorico= historico.crearHistorico("Creacion de la Cuenta",cuenta.getBalance(),cuenta.getId());
+                insertDB = new InsertDatabase(condb,sqlHistorico);
+                historico.setId(insertDB.getLastIdInserterd());
                 break;
 
             case 2:

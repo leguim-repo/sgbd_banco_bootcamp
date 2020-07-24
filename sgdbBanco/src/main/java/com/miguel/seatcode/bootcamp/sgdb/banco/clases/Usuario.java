@@ -9,7 +9,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Usuario implements UsuarioActions{
-    private Integer id;
+    private Long id;
     private String nombre;
     private String apellido;
     private String dni;
@@ -21,11 +21,11 @@ public class Usuario implements UsuarioActions{
 
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -103,8 +103,8 @@ public class Usuario implements UsuarioActions{
             reader.next();
             return null;
         }
-        // insert into usuarios values (default,'Miguel', 'Crown','12345689Z','miguel','1234',true);
 
+        // insert into usuarios values (default,'Miguel', 'Crown','12345689Z','miguel','1234',true);
         sql = "insert into usuarios values (default,\'"+this.getNombre()+"\', " +
               "\'"+this.getApellido()+"\'," +
               "\'"+this.getDni()+"\'," +
@@ -122,7 +122,7 @@ public class Usuario implements UsuarioActions{
             String SQL = "SELECT * FROM usuarios WHERE ( `nombre`= \'"+this.getNombre()+"\' )";
             ResultSet rs = stmt.executeQuery(SQL);
             while (rs.next()) {
-                this.setId(rs.getInt("id_usuario"));
+                this.setId(rs.getLong("id_usuario"));
                 this.setNombre(rs.getString("nombre"));
                 this.setApellido(rs.getString("apellido"));
                 this.setDni(rs.getString("dni"));

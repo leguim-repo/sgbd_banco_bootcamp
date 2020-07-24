@@ -1,17 +1,17 @@
 package com.miguel.seatcode.bootcamp.sgdb.banco.clases;
 
 public class Historico implements HistoricoActions{
-    private int id;
+    private Long id;
     private String movimiento;
     private float balance;
     private String fecha;
-    private int FK_id_cuenta;
+    private Long FK_id_cuenta;
 
     public Historico() {
     }
 
     @Override
-    public String crearHistorico(String movimiento, float balance, int fk_id_cuenta){
+    public String crearHistorico(String movimiento, float balance, Long fk_id_cuenta){
         this.setMovimiento(movimiento);
         this.setBalance(balance);
         this.setFK_id_cuenta(fk_id_cuenta);
@@ -26,11 +26,11 @@ public class Historico implements HistoricoActions{
 
         return sql;    }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -58,11 +58,11 @@ public class Historico implements HistoricoActions{
         this.fecha = fecha;
     }
 
-    public int getFK_id_cuenta() {
+    public Long getFK_id_cuenta() {
         return FK_id_cuenta;
     }
 
-    public void setFK_id_cuenta(int FK_id_cuenta) {
+    public void setFK_id_cuenta(Long FK_id_cuenta) {
         this.FK_id_cuenta = FK_id_cuenta;
     }
 
