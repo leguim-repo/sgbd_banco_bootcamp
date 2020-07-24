@@ -5,19 +5,26 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class InsertDatabase {
-    public InsertDatabase (Connection conn,String SQL) throws SQLException {
+    public Integer getLastIdInserterd() {
+        return lastIdInserterd;
+    }
+
+    public void setLastIdInserterd(Integer lastIdInserterd) {
+        this.lastIdInserterd = lastIdInserterd;
+    }
+
+    private Integer lastIdInserterd;
+
+    public  InsertDatabase (Connection conn,String SQL) throws SQLException {
+    Integer lastId=null;
         try {
             java.sql.Statement stmt = conn.createStatement();
-            /*
-            String SQL = "INSERT INTO Employees " +
-                    "VALUES (108, 20, 'save', 'point')";
-
-             */
-            stmt.executeUpdate(SQL);
+            lastId=stmt.executeUpdate(SQL);
+            this.setLastIdInserterd(lastId);
+            //System.out.println(stmt.toString());
         }
         catch (SQLException exception) {
             System.out.println("Error en InsertDatabase" + exception);
         }
-
     }
 }

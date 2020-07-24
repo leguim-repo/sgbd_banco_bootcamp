@@ -114,18 +114,8 @@ public class Usuario implements UsuarioActions{
     }
 
     @Override
-    //metodo para consultar un usuario
+    //metodo para consultar un usuario con el nombre busco en la db y cargo los datos en la clase
     public String consultarUsuario(Connection conn) {
-        Scanner reader = new Scanner(System.in);
-        try {
-            System.out.println("\nDame el usuario:");
-            this.setNombre(reader.nextLine());
-
-        } catch (InputMismatchException exception) {
-            System.out.println("Error al introducir datos de usuario " + exception);
-            reader.next();
-            return null;
-        }
 
         try {
             java.sql.Statement stmt = conn.createStatement();

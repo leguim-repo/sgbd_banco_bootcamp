@@ -1,5 +1,7 @@
 package com.miguel.seatcode.bootcamp.sgdb.banco.gui;
 
+import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Cuenta;
+import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Historico;
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.InsertDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Usuario;
 
@@ -17,8 +19,12 @@ public class InterfaceGUI {
         menu();
     }
 
-    static boolean selectorOpciones(int option){
+    static boolean selectorOpciones(int option) throws SQLException {
     Usuario usuario;
+    Cuenta cuenta;
+    Historico historico;
+    InsertDatabase insertDB = null;
+
         switch (option) {
 
             case 0:
@@ -28,27 +34,59 @@ public class InterfaceGUI {
             case 1:
                 // Crear Usuario obtener datos del usuario a traves de la consola
                 usuario = new Usuario();
-                String sql=usuario.crearUsuario();
-                if (sql !=null) {
+                String sqlUsuario=usuario.crearUsuario();
+
+
+                if (sqlUsuario !=null) {
                     //Tengo todos los datos ok los meto en la db
-                    try {
-                        InsertDatabase insert = new InsertDatabase(condb,sql);
-                    }
-                    catch (SQLException exception) {
-                        System.out.println("Error al insertar nuevo usuario en la bd" + exception);
-                        exception.printStackTrace();
-                    }
+                    insertDB = new InsertDatabase(condb,sqlUsuario);
                 }
                 else {
                     System.out.println("Algun datos es incorrecto");
                 }
+
+                //recargo los dato para obtner el id del usuario y poder crear una cuenta asignada a ese user
+                usuario.consultarUsuario(condb);
+
+                //creamos la cuenta corriente con balance de 0 €
+                cuenta = new Cuenta();
+                String sqlCuenta=cuenta.crearCuenta(0,usuario.getId());
+
+                if (sqlCuenta !=null) {
+                    //Tengo todos los datos ok los meto en la db
+                    insertDB = new InsertDatabase(condb,sqlCuenta);
+                }
+                else {
+                    System.out.println("Algun de la cuenta es incorrecto");
+                }
+
+                //todo recargar los datos de la cuenta con el fin de obtener el id y crear el registro para el historico
+                cuenta.setId(insertDB.getLastIdInserterd());
+
+                //creo el registro en el historico para indicar que se ha creado la cuenta
+                historico = new Historico();
+                historico.crearHistorico("Creacion de la Cuenta",cuenta.getBalance(),cuenta.getId());
 
                 break;
 
             case 2:
                 // Consultar Usuario
                 usuario = new Usuario();
+
+                Scanner reader = new Scanner(System.in);
+                try {
+                    System.out.println("\nDame el usuario:");
+                    usuario.setNombre(reader.nextLine());
+
+                } catch (InputMismatchException exception) {
+                    System.out.println("Error al introducir datos de usuario " + exception);
+                    reader.next();
+                }
+
                 usuario.consultarUsuario(condb);
+
+
+
                 break;
 
             case 3:
@@ -71,7 +109,7 @@ public class InterfaceGUI {
         return false;
     }
 
-    static void menu() {
+    static void menu() throws SQLException {
         boolean flagexit = false;
 
         do {
