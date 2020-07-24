@@ -43,7 +43,11 @@ public class Cuenta implements CuentaActions {
 
     @Override
     public String reintegro(Connection conn) {
-        //
+        // id de cuenta
+        // cantidad de dinero a reintegrar
+        // crear registro del historico
+        // actualizar el saldo en la cuenta ( saldo = saldo - reintegro )
+
 
         return null;
     }
