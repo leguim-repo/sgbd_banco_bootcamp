@@ -15,7 +15,8 @@ public class InsertDatabase {
         this.lastIdInserterd = lastIdInserterd;
     }
 
-
+    //inserta un registro en la db y obtengo el id de dicho registro
+    //este id lo utilizo para encadenar los registro al crear el usuario
     public InsertDatabase (Connection conn,String SQL) throws SQLException {
     Long lastId=null;
         try {

@@ -45,6 +45,7 @@ public class InterfaceGUI {
                     System.out.println("Algun datos es incorrecto");
                 }
 
+                //todo esto se debe modificar pq el metodo de insertar ya obtiene el id del registro insertado en la db
                 //recargo los dato para obtner el id del usuario y poder crear una cuenta asignada a ese user
                 usuario.consultarUsuario(condb);
 
@@ -60,7 +61,7 @@ public class InterfaceGUI {
                     System.out.println("Algun de la cuenta es incorrecto");
                 }
 
-                //seteo el id
+                //seteo el id de la cuenta gracias al getLastIdInserted
                 cuenta.setId(insertDB.getLastIdInserterd());
 
                 //creo el registro en el historico para indicar que se ha creado la cuenta
@@ -102,6 +103,9 @@ public class InterfaceGUI {
                 // Ver Movimientos cuenta
                 break;
 
+            case 6:
+                // Ver todas las cuentas
+                break;
 
             default:
                 System.out.print("Opcion desconocida");
@@ -122,6 +126,7 @@ public class InterfaceGUI {
                 "( 3 ) Reintegro en cuenta\n"+
                 "( 4 ) Ingreso en cuenta\n"+
                 "( 5 ) Ver Movimientos cuenta\n"+
+                "( 6 ) Ver Todas las cuentas\n"+
 
                 "\n( 0 ) Salir\n"+
                 "------------------------\n" +
