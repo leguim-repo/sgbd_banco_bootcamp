@@ -10,16 +10,96 @@ package com.miguel.seatcode.bootcamp.sgdb.banco.database;
 
  */
 
+
+
 import java.sql.*;
+import java.util.*;
 
 public class EngineSQL {
 	private Connection connection;
-	private Long lastIdInserterd;
+	private Long lastIdUpdated;
+
+	// quizas este bien almacenar las credenciales... aunque almacenar passwords... fijo que es mala practica
+	private String ip;
+	private String port;
+	private String nameDB;
+	private String userDB;
+	private String passwordDB;
 
 	public EngineSQL() {
 	}
-	// metodo de conexion a la db
-	public void ConnectDatabase(String target) {
+
+	// metodo para obtener los datos de la conexion, aunque deberia ir en el gui
+	public void setConnectionCredentials() {
+		Scanner reader = new Scanner(System.in);
+		try {
+			System.out.println("Direccion ip de conexion (127.0.0.1): ");
+			this.setIp(reader.nextLine().toUpperCase());
+			System.out.println("Puerto de conexion (3306): ");
+			this.setPort(reader.nextLine().toUpperCase());
+			System.out.println("Nombre de la DB (mazebank): ");
+			this.setNameDB(reader.nextLine());
+			System.out.println("Usuario (root): ");
+			this.setUserDB(reader.nextLine());
+			System.out.println("Password (secret1234): ");
+			this.setPasswordDB(reader.nextLine());
+
+		} catch (InputMismatchException exception) {
+			System.out.println("Error al introducir datos de usuario " + exception);
+			reader.next();
+		}
+
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	public String getNameDB() {
+		return nameDB;
+	}
+
+	public void setNameDB(String nameDB) {
+		this.nameDB = nameDB;
+	}
+
+	public String getUserDB() {
+		return userDB;
+	}
+
+	public void setUserDB(String userDB) {
+		this.userDB = userDB;
+	}
+
+	public String getPasswordDB() {
+		return passwordDB;
+	}
+
+	public void setPasswordDB(String passwordDB) {
+		this.passwordDB = passwordDB;
+	}
+
+	// metodo de conexion a la db pasando parametros
+	public void ConnectDatabase(String ip, Integer port,String nameDB, String userDB, String passwordDB) {
+
+		this.setIp(ip);
+		this.setPort(port.toString());
+		this.setNameDB(nameDB);
+		this.setUserDB(userDB);
+		this.setPasswordDB(passwordDB);
+
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		}
@@ -28,14 +108,39 @@ public class EngineSQL {
 		}
 
 		try {
-			// todo los datos de conexion deben pasar a parametros y mas en el ecommerce
 			this.connection = DriverManager.getConnection(
-					"jdbc:mysql://127.0.0.1:3306/" + target,
-					"root",
-					"secret1234");
+					"jdbc:mysql://"+ip+":"+port+"/" + nameDB,
+					userDB,
+					passwordDB);
 
 			boolean valid = connection.isValid(50000);
-			System.out.println(valid ? "Conexion a la BD OK" : "Conexion a la BD FAIL");
+			System.out.println(valid ? "Conexion a la BD "+this.getNameDB()+" OK" : "Conexion a la BD "+this.getNameDB()+" FAIL");
+
+		}
+		catch (SQLException exception) {
+			System.out.println("Error: "+ exception);
+		}
+
+	}
+
+	// overload para usar los datos seteados
+	public void ConnectDatabase() {
+		// todo falta verificar que los datos son correctos y no estan vacios
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		}
+		catch (ClassNotFoundException ex) {
+			System.out.println("Error al registrar el driver de MySQL: "+ ex);
+		}
+
+		try {
+			this.connection = DriverManager.getConnection(
+					"jdbc:mysql://"+this.getIp()+":"+this.getPort()+"/" + this.getNameDB(),
+					this.getUserDB(),
+					this.getPasswordDB());
+
+			boolean valid = connection.isValid(50000);
+			System.out.println(valid ? "Conexion a la BD "+this.getNameDB()+" OK" : "Conexion a la BD "+this.getNameDB()+" FAIL");
 
 		}
 		catch (SQLException exception) {
@@ -66,7 +171,7 @@ public class EngineSQL {
 	// ahora me gusta mas, ya que el insert puede devolver el id del registro insertado o null si ha fallado
 	// null si fall long si ok
 
-	public Long InsertDatabase (String SQL) throws SQLException {
+	public Long updateDatabase(String SQL) throws SQLException {
 		Long lastId=null;
 		try {
 			Statement stmt = this.connection.createStatement();
@@ -74,7 +179,7 @@ public class EngineSQL {
 			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
 					lastId=generatedKeys.getLong(1);
-					this.setLastIdInserterd(lastId);
+					this.setLastIdUpdated(lastId);
 					stmt.close();
 					return lastId;
 				}
@@ -89,31 +194,49 @@ public class EngineSQL {
 		}
 		return null;
 	}
-	public Long getLastIdInserterd() {
-		return lastIdInserterd;
-	}
-	public void setLastIdInserterd(Long lastIdInserterd) {
-		this.lastIdInserterd = lastIdInserterd;
+
+	public Long getLastIdUpdated() {
+		return lastIdUpdated;
 	}
 
-	// Statement para obterner datos
-	public ResultSet Statement(String sql) throws SQLException {
+	public void setLastIdUpdated(Long lastIdUpdated) {
+		this.lastIdUpdated = lastIdUpdated;
+	}
+
+	/* getValuesDatabase metodo para realizar cualuquier consulta de datos
+		Este metodo permite obterner los datos de cualquier consulta y los mete en una lista
+	*/
+	public  List<Map<String, Object>>  getValuesDatabase(String sql) throws SQLException {
+		List<Map<String, Object>>  datos = new ArrayList<Map<String, Object>>();
+
 		try {
-			System.out.println("Creating statement...");
 			java.sql.Statement stmt = this.connection.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData md = rs.getMetaData();
+			int columns = md.getColumnCount();
+
+			while (rs.next()) {
+				Map<String, Object> row = new HashMap<String, Object>(columns);
+				for(int i = 1; i <= columns; ++i){
+					row.put(md.getColumnName(i), rs.getObject(i));
+				}
+				datos.add(row);
+			}
+
 			stmt.close();
-			return rs;
+			rs.close();
+			return datos;
 
 		}
 		catch (Exception exception) {
 			System.out.println("Error en la clase:\n\t"+
 					this.getClass().getName()+"\n"+
 					"Metodo: \n\t"+
-					exception.getStackTrace()[0].getMethodName());
+					exception.getStackTrace()[0].getMethodName()+"\n"+exception);
 			System.exit(1);
 		}
 		return null;
 	}
+
 
 }

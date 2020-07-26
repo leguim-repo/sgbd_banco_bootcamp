@@ -2,9 +2,12 @@ package com.miguel.seatcode.bootcamp.sgdb.banco.gui;
 
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Cuenta;
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Historico;
+import com.miguel.seatcode.bootcamp.sgdb.banco.database.EngineSQL;
 import com.miguel.seatcode.bootcamp.sgdb.banco.database.InsertDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Usuario;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,10 +16,32 @@ import java.util.InputMismatchException;
 
 public class InterfaceGUI {
     private static Connection condb;
+    private static EngineSQL misql;
 
     public InterfaceGUI(Connection con) throws SQLException {
         this.condb = con;
         menu();
+    }
+
+    // overload del constructor para poder usar EngineSQL
+    public InterfaceGUI(EngineSQL misql) throws SQLException {
+        this.condb = misql.getConnection();
+        this.misql = misql;
+        menu();
+    }
+
+    static void imprimirDatos(String titulo, List<Map<String, Object>> datos) {
+        System.out.println("* * * "+titulo+" * * *");
+        Integer numRow=1;
+        for (Map<String, Object> row:datos) {
+            System.out.println("Numero registro: "+numRow+"/"+datos.size());
+            for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                System.out.println(rowEntry.getKey() + " = " + rowEntry.getValue());
+            }
+            System.out.println("--------------------------");
+            numRow+=1;
+        }
+        System.out.println("");
     }
 
     static boolean selectorOpciones(int option) throws SQLException {
@@ -87,8 +112,6 @@ public class InterfaceGUI {
 
                 usuario.consultarUsuario(condb);
 
-
-
                 break;
 
             case 3:
@@ -104,7 +127,14 @@ public class InterfaceGUI {
                 break;
 
             case 6:
-                // Ver todas las cuentas
+                // Ver todas los usuarios tambien le pongo cuentas para probar la funcionalidad del metodo getValuesDatabase
+                List<Map<String, Object>> datos;
+                datos = misql.getValuesDatabase("SELECT * FROM usuarios");
+                imprimirDatos("Listado de usuarios",datos);
+
+                datos = misql.getValuesDatabase("SELECT * FROM cuentas");
+                imprimirDatos("Listado de cuentas",datos);
+
                 break;
 
             default:
