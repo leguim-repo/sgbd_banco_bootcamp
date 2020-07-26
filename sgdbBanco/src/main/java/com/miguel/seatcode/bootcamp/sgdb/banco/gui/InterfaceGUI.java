@@ -147,7 +147,8 @@ public class InterfaceGUI {
                         Integer nuevoBalance= Integer.valueOf(balance) - Integer.valueOf(cantidadReintegro);
                         // actualizamos los datos de la cuenta
                         misql.updateDatabase("UPDATE cuentas SET balance = "+nuevoBalance.toString()+", fecha = CURRENT_TIMESTAMP WHERE ( id_cuenta  = "+numeroCuenta+")");
-
+                        //creo el registro en el historico
+                        misql.updateDatabase("INSERT INTO historicos ( movimiento,  balance, fecha, cuentas_id_cuenta) VALUES ('Reintegro', "+nuevoBalance.toString()+", CURRENT_TIMESTAMP, "+numeroCuenta+")");
                     }
                     else {
                         System.out.println("Operacion de reintegro cancelada");
