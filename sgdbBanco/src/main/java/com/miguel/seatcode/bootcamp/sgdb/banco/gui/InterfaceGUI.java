@@ -226,7 +226,7 @@ public class InterfaceGUI {
                     System.out.println("Error al introducir el numero de ID de la cuenta " + exception);
                     reader.next();
                 }
-                5
+                
                 datos = misql.getValuesDatabase("SELECT * FROM historicos WHERE (cuentas_id_cuenta = 1 )");
                 imprimirDatos("Historico de la cuenta",datos);
 
