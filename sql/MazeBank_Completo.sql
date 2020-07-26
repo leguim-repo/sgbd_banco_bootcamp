@@ -26,13 +26,13 @@ DROP TABLE IF EXISTS `cuentas`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cuentas` (
   `id_cuenta` int unsigned NOT NULL AUTO_INCREMENT,
-  `balance` decimal(4,0) NOT NULL,
+  `balance` int NOT NULL,
   `fecha` datetime NOT NULL,
   `usuarios_id_usuario` int unsigned NOT NULL,
   PRIMARY KEY (`id_cuenta`),
   KEY `fk_cuentas_usuarios_idx` (`usuarios_id_usuario`),
   CONSTRAINT `fk_cuentas_usuarios` FOREIGN KEY (`usuarios_id_usuario`) REFERENCES `usuarios` (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `cuentas` (
 
 LOCK TABLES `cuentas` WRITE;
 /*!40000 ALTER TABLE `cuentas` DISABLE KEYS */;
-INSERT INTO `cuentas` VALUES (1,1000,'2020-07-23 00:00:00',1),(2,2000,'2020-07-23 00:00:00',2),(3,2000,'2020-07-23 00:00:00',2),(4,1000,'2020-07-23 00:00:00',3);
+INSERT INTO `cuentas` VALUES (1,2800,'2020-07-26 18:10:51',1),(2,7000,'2020-07-26 18:11:44',2),(3,30000,'2020-07-26 18:39:03',3);
 /*!40000 ALTER TABLE `cuentas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,15 +53,15 @@ DROP TABLE IF EXISTS `historicos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `historicos` (
-  `id_historico` int NOT NULL,
+  `id_historico` int NOT NULL AUTO_INCREMENT,
   `movimiento` varchar(45) NOT NULL,
-  `balance` decimal(4,0) NOT NULL,
+  `balance` int NOT NULL,
   `fecha` datetime NOT NULL,
   `cuentas_id_cuenta` int unsigned NOT NULL,
   PRIMARY KEY (`id_historico`),
   KEY `fk_historicos_cuentas1_idx` (`cuentas_id_cuenta`),
   CONSTRAINT `fk_historicos_cuentas1` FOREIGN KEY (`cuentas_id_cuenta`) REFERENCES `cuentas` (`id_cuenta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,6 +70,7 @@ CREATE TABLE `historicos` (
 
 LOCK TABLES `historicos` WRITE;
 /*!40000 ALTER TABLE `historicos` DISABLE KEYS */;
+INSERT INTO `historicos` VALUES (1,'Creacion de la Cuenta',0,'2020-07-24 11:09:48',1),(2,'Reintegro',800,'2020-07-26 18:01:44',1),(3,'Ingreso',2800,'2020-07-26 18:10:51',1),(4,'Ingreso',7000,'2020-07-26 18:11:44',2),(5,'Creacion de la Cuenta',0,'2020-07-26 18:32:05',3),(6,'Ingreso',20000,'2020-07-26 18:36:46',3),(7,'Ingreso',30000,'2020-07-26 18:39:03',3);
 /*!40000 ALTER TABLE `historicos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +99,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Miguel','Crown','12345689Z','miguel',1234,1),(2,'Jose','Perez','3411231D','jose',1234,1),(3,'Lisa','Martin','45678712X','lisa',1234,1);
+INSERT INTO `usuarios` VALUES (1,'MICHAEL','JACKSON','1111111q','MIJA',1234,1),(2,'Lisa','Martin','45678712X','lisa',1234,1),(3,'JASON','BOURNE','11121212as','JABO',1234,1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -111,4 +112,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-23 15:03:31
+-- Dump completed on 2020-07-26 18:40:31
