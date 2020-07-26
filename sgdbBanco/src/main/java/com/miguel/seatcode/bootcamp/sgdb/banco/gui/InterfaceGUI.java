@@ -6,12 +6,9 @@ import com.miguel.seatcode.bootcamp.sgdb.banco.database.EngineSQL;
 import com.miguel.seatcode.bootcamp.sgdb.banco.database.InsertDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.clases.Usuario;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.InputMismatchException;
 
 
 public class InterfaceGUI {
@@ -30,6 +27,20 @@ public class InterfaceGUI {
         menu();
     }
 
+    static boolean bucleSioNo(String pregunta) {
+        Scanner reader = new Scanner(System.in);
+        String respuesta="";
+        while ( !(respuesta.toLowerCase().equals("s")) && !(respuesta.toLowerCase().equals("n"))) {
+            System.out.println(pregunta+" [ S ] o [ N ]:");
+            respuesta=reader.nextLine();
+        }
+        if (respuesta.toLowerCase().equals("s") ) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     static void imprimirDatos(String titulo, List<Map<String, Object>> datos) {
         System.out.println("* * * "+titulo+" * * *");
         Integer numRow=1;
@@ -49,7 +60,8 @@ public class InterfaceGUI {
     Cuenta cuenta;
     Historico historico;
     InsertDatabase insertDB = null;
-
+    Scanner reader = null;
+    List<Map<String, Object>> datosConsulta, datosCuenta, datosUsuario, datosHistorico = null;
         switch (option) {
 
             case 0:
@@ -99,8 +111,8 @@ public class InterfaceGUI {
             case 2:
                 // Consultar Usuario
                 usuario = new Usuario();
+                reader = new Scanner(System.in);
 
-                Scanner reader = new Scanner(System.in);
                 try {
                     System.out.println("\nDame el usuario:");
                     usuario.setNombre(reader.nextLine());
@@ -116,6 +128,37 @@ public class InterfaceGUI {
 
             case 3:
                 // Reintegro en cuenta
+                reader = new Scanner(System.in);
+                String numeroCuenta=null;
+                String cantidadReintegro=null;
+
+                try {
+                    System.out.println("Dame el id de cuenta en el que hacer el reintegro:");
+                    numeroCuenta=reader.nextLine();
+                    datosCuenta=misql.getValuesDatabase("SELECT * from cuentas WHERE( id_cuenta = '"+numeroCuenta+"')");
+                    datosUsuario=misql.getValuesDatabase("SELECT * from usuarios WHERE( id_usuario = '"+((HashMap) datosCuenta.toArray()[0]).get("usuarios_id_usuario")+"')");
+                    imprimirDatos("Datos Cuenta",datosCuenta);
+                    imprimirDatos("Datos Usuario", datosUsuario);
+                    if (bucleSioNo("Esta es la cuenta donde desea hacer el reintegro?")) {
+                        //preguntar cantidad a reintegrar
+                        System.out.println("Cantidad a reintegrar:");
+                        cantidadReintegro=reader.nextLine();
+                        String balance=((HashMap) datosCuenta.toArray()[0]).get("balance").toString();
+                        Integer nuevoBalance= Integer.valueOf(balance) - Integer.valueOf(cantidadReintegro);
+                        // actualizamos los datos de la cuenta
+                        misql.updateDatabase("UPDATE cuentas SET balance = "+nuevoBalance.toString()+", fecha = CURRENT_TIMESTAMP WHERE ( id_cuenta  = "+numeroCuenta+")");
+
+                    }
+                    else {
+                        System.out.println("Operacion de reintegro cancelada");
+                    }
+                }
+
+                catch (InputMismatchException exception) {
+                    System.out.println("Error al introducir datos de usuario " + exception);
+                    reader.next();
+                }
+
                 break;
 
             case 4:

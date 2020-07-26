@@ -109,7 +109,7 @@ public class EngineSQL {
 
 		try {
 			this.connection = DriverManager.getConnection(
-					"jdbc:mysql://"+ip+":"+port+"/" + nameDB,
+					"jdbc:mysql://"+ip+":"+port+"/" + nameDB +"?serverTimezone=UTC",
 					userDB,
 					passwordDB);
 
@@ -184,7 +184,20 @@ public class EngineSQL {
 					return lastId;
 				}
 				else {
-					throw new SQLException("Creating user failed, no ID obtained.");
+					/*
+					Si la sentencia sql tiene un update no va a generar nunca un id, ya que esta actualizando un id existente
+					devolvemos 0
+					Si la sentencia sql tiene un insert y llegamos a este else significa que algo ha funcionado mal
+					lanzamos un mensaje de error
+					 */
+					if (SQL.toLowerCase().contains("update")) {
+						return Long.valueOf(0);
+					}
+					else {
+						System.out.println("Error al obtener el ID insertado");
+						return null;
+					}
+
 				}
 			}
 
