@@ -1,6 +1,10 @@
 # Reto SGBD de un banco
 
-Ejemplo del profe Marcos:
+master: Rama master del SGB  
+develop: Rama develop. Desarrollo principal  
+develop-lanterna: Rama para probar a integrar el gui lanterna  
+
+Ejemplo del profe Marcos:  
 <https://github.com/MarcosGeekHubs/Seat-JDBC>
 
 Problemillas con las jdks (cannot resolve java), check los jdk del proyecto:
@@ -14,3 +18,4 @@ Problemillas con las jdks (cannot resolve java), check los jdk del proyecto:
 <https://www.gigarocket.net/free-hosting.php>
 
 <https://www.heliohost.org/>
+
