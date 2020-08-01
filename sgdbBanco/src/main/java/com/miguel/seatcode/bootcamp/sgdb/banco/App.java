@@ -2,8 +2,10 @@ package com.miguel.seatcode.bootcamp.sgdb.banco;
 
 import com.miguel.seatcode.bootcamp.sgdb.banco.database.ConnectDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.database.EngineSQL;
+import com.miguel.seatcode.bootcamp.sgdb.banco.gui.GuiLanterna;
 import com.miguel.seatcode.bootcamp.sgdb.banco.gui.InterfaceGUI;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -18,7 +20,15 @@ public class App
         //misql.setConnectionCredentials();
         misql.ConnectDatabase("127.0.0.1",3306,"mazebank","root","secret1234");
 
-        InterfaceGUI gui = new InterfaceGUI(misql);
+        //InterfaceGUI gui = new InterfaceGUI(misql);
+
+        try {
+            GuiLanterna guiLanterna = new GuiLanterna();
+            guiLanterna.verMenuPrincipal();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //ConnectDatabase seldb = new ConnectDatabase("mazebank");
         //InterfaceGUI gui = new InterfaceGUI(seldb.getConnection());
