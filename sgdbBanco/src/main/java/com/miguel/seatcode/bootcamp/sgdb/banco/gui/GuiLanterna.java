@@ -1,19 +1,21 @@
 package com.miguel.seatcode.bootcamp.sgdb.banco.gui;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.miguel.seatcode.bootcamp.sgdb.banco.database.Cliente;
+import com.miguel.seatcode.bootcamp.sgdb.banco.database.EngineSQL;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,8 +24,9 @@ public class GuiLanterna {
     public Screen screen;
     public BasicWindow window;
     public WindowBasedTextGUI textGUI;
-
     public Panel mainPanel;
+    public EngineSQL engineSQL;
+
 
     public GuiLanterna() throws IOException {
         this.terminal = new DefaultTerminalFactory().createTerminal();
@@ -36,7 +39,13 @@ public class GuiLanterna {
         this.window.setHints(Arrays.asList(Window.Hint.CENTERED));
         this.window.setComponent(mainPanel.withBorder(Borders.singleLine("Main Panel")));
 
+        //esto tiene que ir al constructor
+        //Setup theme
+        this.textGUI.setTheme(LanternaThemes.getRegisteredTheme("default"));
+
         this.screen.startScreen();
+        this.engineSQL = new EngineSQL();
+
     }
 
     public void menuPrincipal()  {
@@ -83,59 +92,8 @@ public class GuiLanterna {
 
     }
 
-    private void verMenuPrincipalActionListDialog()  {
-        this.mainPanel.removeAllComponents();
-        ActionListDialogBuilder menuPrincipal = new ActionListDialogBuilder();
-        menuPrincipal.setTitle("Maze Bank");
-        menuPrincipal.setDescription("Escoja una opcion");
-        menuPrincipal.addAction("Crear nuevo Cliente", new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Crear  Usuario");
-                formClientes();
-            }
-        });
 
-        menuPrincipal.addAction("Consultar Cliente", new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Consultar Cliente");
-                    }
-                });
-        menuPrincipal.addAction("Reintegro en Cuenta", new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Reintegro en Cuenta");
-                    }
-                });
-        menuPrincipal.addAction("Ingreso en Cuenta", new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Ingreso en Cuenta");
-                    }
-                });
-        menuPrincipal.addAction("Ver lista Clientes", new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Ver lista Clientes");
-                    }
-                });
-        menuPrincipal.addAction("Ver historico de cuenta", new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Ver historico de cuenta");
-                        verTablaDatos();
-                    }
-                });
-
-        //this.mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        menuPrincipal.build().showDialog(textGUI);
-        menuPrincipal.setCanCancel(true);
-        //textGUI.addWindowAndWait(this.window);
-
-    }
-
-    public void formClientes() {
+    public void formCliente(Cliente datos) {
         this.mainPanel.removeAllComponents();
         this.mainPanel.setLayoutManager(new GridLayout(1));
 
@@ -144,34 +102,119 @@ public class GuiLanterna {
         panelDatos.setLayoutManager(new GridLayout(2));
 
         // creamos los elementos del gui necesarios
+        // id se debe crear en funcion de los parametros
+        if (datos != null) {
+            panelDatos.addComponent(new Label("ID"));
+            final TextBox txtIDCliente = new TextBox(new TerminalSize(20, 1));
+            txtIDCliente.setText(String.valueOf(datos.id));
+            panelDatos.addComponent(txtIDCliente);
+        }
+
         panelDatos.addComponent(new Label("Nombre"));
         final TextBox txtNombre = new TextBox(new TerminalSize(20, 1));
+        if (datos != null) txtNombre.setText(datos.nombre);
         panelDatos.addComponent(txtNombre);
 
         panelDatos.addComponent(new Label("Apellidos"));
         final TextBox txtApellidos =  new TextBox(new TerminalSize(20, 1));
+        if (datos != null) txtApellidos.setText(datos.apellido);
         panelDatos.addComponent(txtApellidos);
 
         panelDatos.addComponent(new Label("DNI"));
         final TextBox txtDNI = new TextBox(new TerminalSize(10, 1));
+        if (datos != null) txtDNI.setText(datos.dni);
         panelDatos.addComponent(txtDNI);
 
         panelDatos.addComponent(new Label("Usuario"));
         final TextBox txtUsuario = new TextBox(new TerminalSize(5, 1));
+        if (datos != null) txtUsuario.setText(datos.usuario);
         panelDatos.addComponent(txtUsuario);
 
         panelDatos.addComponent(new Label("Pin"));
         final TextBox txtPin = new TextBox(new TerminalSize(5, 1));
+        if (datos != null) txtPin.setText(String.valueOf(datos.pin));
         panelDatos.addComponent(txtPin);
 
         panelDatos.addComponent(new Label("Cliente Activo"));
         TerminalSize size = new TerminalSize(5, 1);
-        CheckBoxList<String> cbActivo = new CheckBoxList<String>(size);
+        final CheckBoxList<String> cbActivo = new CheckBoxList<String>(size);
         cbActivo.addItem("");
+        if (datos != null) cbActivo.setChecked("", datos.activo);
         panelDatos.addComponent(cbActivo);
 
-        // los botones de opciones....deberian generse donde llame al formulario para poder tener mas flexibilidad
-        // de esta forma puedo usar el mismo formulario para varias opciones con solo cambiar los botones
+
+
+
+        this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+        this.mainPanel.addComponent(panelDatos);
+
+        //dependiendo de si tengo datos veo o creo un usuario
+        if (datos != null) {
+            // botones para ver el usuario
+            this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+            this.mainPanel.addComponent(botonesVerCliente());
+        }
+        else {
+            // botones para crear un usuario nuevo
+            Button btnCancelar = new Button("Cancelar", new Runnable() {
+                @Override
+                public void run() {
+                    // Actions go here
+                    System.out.println("btnCancelar");
+                    menuPrincipal();
+                }
+            });
+            Button btnCrear = new Button("Crear", new Runnable() {
+                @Override
+                public void run() {
+                    // Actions go here
+                    System.out.println("btnCrear");
+                    txtNombre.setText(txtNombre.getText().toUpperCase());
+                    txtApellidos.setText(txtApellidos.getText().toUpperCase());
+                    txtDNI.setText(txtDNI.getText().toUpperCase());
+                    txtUsuario.setText(txtUsuario.getText().toUpperCase());
+
+                    if ( txtNombre.getText().isBlank() || txtApellidos.getText().isBlank() || txtDNI.getText().isBlank() || txtUsuario.getText().isBlank() || txtPin.getText().isBlank( )) {
+                        verPopUp("Algun campo esta vacio.\nNo se puede crear el cliente sin datos","Error",MessageDialogButton.OK );
+
+                    } else if ( !txtPin.getText().matches("\\d\\d\\d\\d") ) {
+                        System.out.println("error en el pin");
+                        verPopUp("El pin debe ser numerico y de 4 cifras","Error",MessageDialogButton.OK );
+                    } else if ( !cbActivo.isChecked(0)) {
+                        verPopUp("No se puede dar de alta un cliente inactivo.\nCompruebe el campo Activo","Error", MessageDialogButton.OK);
+                    }
+                    else{
+                        //datos validos
+                        if (MessageDialogButton.Yes == verPopUp("Datos validos!\n¿Desea crear el nuevo cliente?","Informacion", MessageDialogButton.Yes, MessageDialogButton.No )) {
+                            System.out.println(txtPin.getText());
+                            Cliente cliente = new Cliente(txtNombre.getText(),txtApellidos.getText(), txtDNI.getText(),txtUsuario.getText(),Integer.parseInt(txtPin.getText()), cbActivo.isChecked(0));
+                            System.out.println(cliente.insCliente());
+                            //llamar al metodo necesario para insertar el nuevo cliente
+                        }
+                        else {
+                            System.out.println("Creacion nuevo usuario cancelada");
+                        }
+                    }
+
+                }
+            });
+
+            //panel botones inferior
+            Panel panelBotones = new Panel();
+            panelBotones.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+            panelBotones.setLayoutManager(new GridLayout(2));
+            panelBotones.addComponent(btnCancelar);
+            panelBotones.addComponent(btnCrear);
+        }
+
+
+    }
+
+    public void botonesCrearCliente() {
+
+    }
+
+    public Panel botonesVerCliente() {
         Button btnCancelar = new Button("Cancelar", new Runnable() {
             @Override
             public void run() {
@@ -180,40 +223,19 @@ public class GuiLanterna {
                 menuPrincipal();
             }
         });
-        Button btnCrear = new Button("Crear", new Runnable() {
-            @Override
-            public void run() {
-                // Actions go here
-                System.out.println("btnCrear");
-            }
-        });
-
-        //panel botones inferior
         Panel panelBotones = new Panel();
         panelBotones.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         panelBotones.setLayoutManager(new GridLayout(2));
         panelBotones.addComponent(btnCancelar);
-        panelBotones.addComponent(btnCrear);
-
-
-        this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        this.mainPanel.addComponent(panelDatos);
-        this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        this.mainPanel.addComponent(panelBotones);
-
+        return panelBotones;
     }
 
-    public void verPopUp(String mensaje, String titulo, MessageDialogButton botones) {
-        new MessageDialogBuilder()
-                .setTitle(titulo)
-                .setText(mensaje)
-                .addButton(botones)
-                .build()
-                .showDialog(this.textGUI);
-
+    
+    public MessageDialogButton verPopUp(String mensaje, String titulo, MessageDialogButton... botones) {
+        return MessageDialog.showMessageDialog(textGUI, titulo, mensaje, botones);
     }
 
-    // primera version pendiente de se eliminada
+
     private void verMenuPrincipalActionList(){
         this.mainPanel.removeAllComponents();
         //Definicion de lista de opciones de menu
@@ -225,7 +247,7 @@ public class GuiLanterna {
             @Override
             public void run() {
                 System.out.println("Crear  Usuario");
-                formClientes();
+                formCliente(null);
             }
         });
 
@@ -233,6 +255,15 @@ public class GuiLanterna {
             @Override
             public void run() {
                 System.out.println("Consultar Usuario");
+                try {
+                    //todo preguntar que cliente quieres buscar...por el dni
+                    Cliente cliente = engineSQL.getCliente();
+                    System.out.println(cliente.toString());
+                    formCliente(cliente);
+                }
+                catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
 
             }
         });
@@ -286,9 +317,63 @@ public class GuiLanterna {
 
         //this.mainPanel.setTheme(LanternaThemes.getRegisteredTheme("conqueror"));
         System.out.println(LanternaThemes.getRegisteredThemes().toString());
-        //esto tiene que ir al constructor
-        this.textGUI.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
+
         this.textGUI.addWindowAndWait(this.window);
 
     }
+
+    /* No me termina de gustar
+    private void verMenuPrincipalActionListDialog()  {
+        this.mainPanel.removeAllComponents();
+        ActionListDialogBuilder menuPrincipal = new ActionListDialogBuilder();
+        menuPrincipal.setTitle("Maze Bank");
+        menuPrincipal.setDescription("Escoja una opcion");
+        menuPrincipal.addAction("Crear nuevo Cliente", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Crear  Usuario");
+                formCliente(null);
+            }
+        });
+
+        menuPrincipal.addAction("Consultar Cliente", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Consultar Cliente");
+            }
+        });
+        menuPrincipal.addAction("Reintegro en Cuenta", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Reintegro en Cuenta");
+            }
+        });
+        menuPrincipal.addAction("Ingreso en Cuenta", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Ingreso en Cuenta");
+            }
+        });
+        menuPrincipal.addAction("Ver lista Clientes", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Ver lista Clientes");
+            }
+        });
+        menuPrincipal.addAction("Ver historico de cuenta", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Ver historico de cuenta");
+                verTablaDatos();
+            }
+        });
+
+        //this.mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        menuPrincipal.build().showDialog(textGUI);
+        menuPrincipal.setCanCancel(true);
+        //textGUI.addWindowAndWait(this.window);
+
+    }
+    */
+
 }

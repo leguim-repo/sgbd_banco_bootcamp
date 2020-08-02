@@ -92,7 +92,7 @@ public class EngineSQL {
 	}
 
 	// metodo de conexion a la db pasando parametros
-	public void ConnectDatabase(String ip, Integer port,String nameDB, String userDB, String passwordDB) {
+	public void ConnectDatabase(String ip, Integer port,String nameDB, String userDB, String passwordDB) throws ClassNotFoundException,SQLException {
 
 		this.setIp(ip);
 		this.setPort(port.toString());
@@ -100,26 +100,16 @@ public class EngineSQL {
 		this.setUserDB(userDB);
 		this.setPasswordDB(passwordDB);
 
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		}
-		catch (ClassNotFoundException ex) {
-			System.out.println("Error al registrar el driver de MySQL: "+ ex);
-		}
 
-		try {
-			this.connection = DriverManager.getConnection(
-					"jdbc:mysql://"+ip+":"+port+"/" + nameDB +"?serverTimezone=UTC",
-					userDB,
-					passwordDB);
+		Class.forName("com.mysql.cj.jdbc.Driver");
 
-			boolean valid = connection.isValid(50000);
-			System.out.println(valid ? "Conexion a la BD "+this.getNameDB()+" OK" : "Conexion a la BD "+this.getNameDB()+" FAIL");
+		this.connection = DriverManager.getConnection(
+				"jdbc:mysql://"+ip+":"+port+"/" + nameDB +"?serverTimezone=UTC",
+				userDB,
+				passwordDB);
 
-		}
-		catch (SQLException exception) {
-			System.out.println("Error: "+ exception);
-		}
+		boolean valid = connection.isValid(50000);
+		System.out.println(valid ? "Conexion a la BD "+this.getNameDB()+" OK" : "Conexion a la BD "+this.getNameDB()+" FAIL");
 
 	}
 
@@ -251,5 +241,24 @@ public class EngineSQL {
 		return null;
 	}
 
+	public Cliente getCliente() throws SQLException {
+		Cliente datos = null;
+		java.sql.Statement stmt = this.connection.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM usuarios WHERE (nombre = 'MIGUEL')");
+
+		while (rs.next()) {
+			System.out.println(rs);
+			datos = new Cliente(rs.getLong("id_usuario"),
+								rs.getString("nombre"),
+								rs.getString("apellido"),
+								rs.getString("dni"),
+								rs.getString("usuario"),
+								rs.getInt("pin"),
+								rs.getBoolean("activo") );
+		}
+		stmt.close();
+
+		return datos;
+	}
 
 }

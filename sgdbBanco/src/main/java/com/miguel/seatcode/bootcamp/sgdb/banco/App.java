@@ -17,19 +17,22 @@ public class App
 {
     public static void main( String[] args )  throws SQLException
     {
+        /*
         EngineSQL misql = new EngineSQL();
         //misql.setConnectionCredentials();
         misql.ConnectDatabase("127.0.0.1",3306,"mazebank","root","secret1234");
 
         //InterfaceGUI gui = new InterfaceGUI(misql);
-
+        */
         try {
             GuiLanterna guiLanterna = new GuiLanterna();
+            guiLanterna.engineSQL.ConnectDatabase("127.0.0.1",3306,"mazebank","root","secret1234");
             guiLanterna.verPopUp("Welcome to Maze Bank","Welcome", MessageDialogButton.OK);
             //guiLanterna.verMenuPrincipalActionList();
             guiLanterna.menuPrincipal();
 
-        } catch (IOException e) {
+        }
+        catch (IOException | ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
 
