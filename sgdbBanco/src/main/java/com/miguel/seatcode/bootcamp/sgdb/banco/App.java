@@ -1,5 +1,6 @@
 package com.miguel.seatcode.bootcamp.sgdb.banco;
 
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.miguel.seatcode.bootcamp.sgdb.banco.database.ConnectDatabase;
 import com.miguel.seatcode.bootcamp.sgdb.banco.database.EngineSQL;
 import com.miguel.seatcode.bootcamp.sgdb.banco.gui.GuiLanterna;
@@ -24,7 +25,9 @@ public class App
 
         try {
             GuiLanterna guiLanterna = new GuiLanterna();
-            guiLanterna.verMenuPrincipal();
+            guiLanterna.verPopUp("Welcome to Maze Bank","Welcome", MessageDialogButton.OK);
+            //guiLanterna.verMenuPrincipalActionList();
+            guiLanterna.menuPrincipal();
 
         } catch (IOException e) {
             e.printStackTrace();

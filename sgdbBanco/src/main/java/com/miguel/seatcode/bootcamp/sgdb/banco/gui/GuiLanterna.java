@@ -3,6 +3,7 @@ package com.miguel.seatcode.bootcamp.sgdb.banco.gui;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.table.Table;
@@ -37,6 +38,11 @@ public class GuiLanterna {
         this.screen.startScreen();
     }
 
+    public void menuPrincipal()  {
+        //verMenuPrincipalActionListDialog();
+        verMenuPrincipalActionList();
+    }
+
     public void verTablaDatos() {
         this.mainPanel.removeAllComponents();
         Panel panelTabla = new Panel();
@@ -63,7 +69,7 @@ public class GuiLanterna {
             public void run() {
                 // Actions go here
                 System.out.println("btnCerrar");
-                verMenuPrincipal();
+                menuPrincipal();
             }
         });
 
@@ -76,7 +82,138 @@ public class GuiLanterna {
 
     }
 
-    public void verMenuPrincipal(){
+    private void verMenuPrincipalActionListDialog()  {
+        this.mainPanel.removeAllComponents();
+        ActionListDialogBuilder menuPrincipal = new ActionListDialogBuilder();
+        menuPrincipal.setTitle("Maze Bank");
+        menuPrincipal.setDescription("Escoja una opcion");
+        menuPrincipal.addAction("Crear nuevo Cliente", new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Crear  Usuario");
+                formClientes();
+            }
+        });
+
+        menuPrincipal.addAction("Consultar Cliente", new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Consultar Cliente");
+                    }
+                });
+        menuPrincipal.addAction("Reintegro en Cuenta", new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Reintegro en Cuenta");
+                    }
+                });
+        menuPrincipal.addAction("Ingreso en Cuenta", new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Ingreso en Cuenta");
+                    }
+                });
+        menuPrincipal.addAction("Ver lista Clientes", new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Ver lista Clientes");
+                    }
+                });
+        menuPrincipal.addAction("Ver historico de cuenta", new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Ver historico de cuenta");
+                        verTablaDatos();
+                    }
+                });
+
+        //this.mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        menuPrincipal.build().showDialog(textGUI);
+        menuPrincipal.setCanCancel(true);
+        //textGUI.addWindowAndWait(this.window);
+
+    }
+
+    public void formClientes() {
+        this.mainPanel.removeAllComponents();
+        this.mainPanel.setLayoutManager(new GridLayout(1));
+
+        Panel panelDatos = new Panel();
+        panelDatos.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        panelDatos.setLayoutManager(new GridLayout(2));
+
+        // creamos los elementos del gui necesarios
+        panelDatos.addComponent(new Label("Nombre"));
+        final TextBox txtNombre = new TextBox(new TerminalSize(20, 1));
+        panelDatos.addComponent(txtNombre);
+
+        panelDatos.addComponent(new Label("Apellidos"));
+        final TextBox txtApellidos =  new TextBox(new TerminalSize(20, 1));
+        panelDatos.addComponent(txtApellidos);
+
+        panelDatos.addComponent(new Label("DNI"));
+        final TextBox txtDNI = new TextBox(new TerminalSize(10, 1));
+        panelDatos.addComponent(txtDNI);
+
+        panelDatos.addComponent(new Label("Usuario"));
+        final TextBox txtUsuario = new TextBox(new TerminalSize(5, 1));
+        panelDatos.addComponent(txtUsuario);
+
+        panelDatos.addComponent(new Label("Pin"));
+        final TextBox txtPin = new TextBox(new TerminalSize(5, 1));
+        panelDatos.addComponent(txtPin);
+
+        panelDatos.addComponent(new Label("Cliente Activo"));
+        TerminalSize size = new TerminalSize(5, 1);
+        CheckBoxList<String> cbActivo = new CheckBoxList<String>(size);
+        cbActivo.addItem("");
+        panelDatos.addComponent(cbActivo);
+
+        // los botones de opciones....deberian generse donde llame al formulario para poder tener mas flexibilidad
+        // de esta forma puedo usar el mismo formulario para varias opciones con solo cambiar los botones
+        Button btnCancelar = new Button("Cancelar", new Runnable() {
+            @Override
+            public void run() {
+                // Actions go here
+                System.out.println("btnCancelar");
+                menuPrincipal();
+            }
+        });
+        Button btnCrear = new Button("Crear", new Runnable() {
+            @Override
+            public void run() {
+                // Actions go here
+                System.out.println("btnCrear");
+            }
+        });
+
+        //panel botones inferior
+        Panel panelBotones = new Panel();
+        panelBotones.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        panelBotones.setLayoutManager(new GridLayout(2));
+        panelBotones.addComponent(btnCancelar);
+        panelBotones.addComponent(btnCrear);
+
+
+        this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+        this.mainPanel.addComponent(panelDatos);
+        this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+        this.mainPanel.addComponent(panelBotones);
+
+    }
+
+    public void verPopUp(String mensaje, String titulo, MessageDialogButton botones) {
+        new MessageDialogBuilder()
+                .setTitle(titulo)
+                .setText(mensaje)
+                .addButton(botones)
+                .build()
+                .showDialog(this.textGUI);
+
+    }
+
+    // primera version pendiente de se eliminada
+    private void verMenuPrincipalActionList(){
         this.mainPanel.removeAllComponents();
         //Definicion de lista de opciones de menu
 
@@ -88,7 +225,6 @@ public class GuiLanterna {
             public void run() {
                 System.out.println("Crear  Usuario");
                 formClientes();
-
             }
         });
 
@@ -134,87 +270,19 @@ public class GuiLanterna {
             }
         });
 
-        actionListBox.addItem("Salir del SGBD", new Runnable() {
+        this.mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        this.window.setComponent(this.mainPanel.withBorder(Borders.singleLine("SGBD Maze Bank")));
+        this.mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        this.mainPanel.addComponent(actionListBox);
+        this.mainPanel.addComponent(new Button("Salir", new Runnable() {
             @Override
             public void run() {
                 System.out.println("Salir");
                 verPopUp("Have a nice day!!","Salir",MessageDialogButton.OK);
                 System.exit(0);
             }
-        });
-
-        this.mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        this.window.setComponent(this.mainPanel.withBorder(Borders.singleLine("SGBD Maze Bank")));
-        this.mainPanel.addComponent(actionListBox);
-        textGUI.addWindowAndWait(this.window);
-
-    }
-
-    public void formClientes() {
-        this.mainPanel.removeAllComponents();
-        this.mainPanel.setLayoutManager(new GridLayout(1));
-
-        Panel panelDatos = new Panel();
-        panelDatos.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        panelDatos.setLayoutManager(new GridLayout(2));
-
-        // creamos los elementos del gui necesarios
-        panelDatos.addComponent(new Label("Nombre"));
-        final TextBox txtNombre = new TextBox();
-        panelDatos.addComponent(txtNombre);
-
-        panelDatos.addComponent(new Label("Apellidos"));
-        final TextBox txtApellidos =  new TextBox(new TerminalSize(40, 1));
-        panelDatos.addComponent(txtApellidos);
-
-        panelDatos.addComponent(new Label("DNI"));
-        final TextBox txtDNI = new TextBox();
-        panelDatos.addComponent(txtDNI);
-
-        panelDatos.addComponent(new Label("Pais"));
-        final TextBox txtPais = new TextBox();
-        panelDatos.addComponent(txtPais);
-
-
-        // botones de opciones
-        Button btnCancelar = new Button("Cancelar", new Runnable() {
-            @Override
-            public void run() {
-                // Actions go here
-                System.out.println("btnCancelar");
-                verMenuPrincipal();
-            }
-        });
-        Button btnCrear = new Button("Crear", new Runnable() {
-            @Override
-            public void run() {
-                // Actions go here
-                System.out.println("btnCrear");
-            }
-        });
-
-        //panel botones inferior
-        Panel panelBotones = new Panel();
-        panelBotones.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        panelBotones.setLayoutManager(new GridLayout(2));
-        panelBotones.addComponent(btnCancelar);
-        panelBotones.addComponent(btnCrear);
-
-
-        this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        this.mainPanel.addComponent(panelDatos);
-        this.mainPanel.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        this.mainPanel.addComponent(panelBotones);
-
-    }
-
-    public void verPopUp(String mensaje, String titulo, MessageDialogButton botones) {
-        new MessageDialogBuilder()
-                .setTitle(titulo)
-                .setText(mensaje)
-                .addButton(botones)
-                .build()
-                .showDialog(this.textGUI);
+        }));
+        this.textGUI.addWindowAndWait(this.window);
 
     }
 }
