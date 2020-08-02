@@ -2,6 +2,7 @@ package com.miguel.seatcode.bootcamp.sgdb.banco.gui;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
@@ -282,6 +283,11 @@ public class GuiLanterna {
                 System.exit(0);
             }
         }));
+
+        //this.mainPanel.setTheme(LanternaThemes.getRegisteredTheme("conqueror"));
+        System.out.println(LanternaThemes.getRegisteredThemes().toString());
+        //esto tiene que ir al constructor
+        this.textGUI.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
         this.textGUI.addWindowAndWait(this.window);
 
     }
